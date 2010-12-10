@@ -1,6 +1,5 @@
 package sis.report;
 
-import java.util.*;
 import sis.studentinfo.*;
 import static sis.report.ReportConstant.NEWLINE;
 
