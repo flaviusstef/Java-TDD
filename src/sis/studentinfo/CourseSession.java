@@ -7,11 +7,11 @@ import java.util.*;
  * session of a specific university course.
  * @author Administrator
  */
-public class CourseSession {
+public class CourseSession implements Comparable<CourseSession> {
    private static int count;
    private String department;
    private String number;
-   private ArrayList<Student> students = new ArrayList<Student>();
+   private List<Student> students = new ArrayList<Student>();
    private Date startDate;
    private int numberOfCredits;
 
@@ -50,11 +50,11 @@ public class CourseSession {
       this.numberOfCredits = numberOfCredits;
    }
 
-   String getDepartment() {
+   public String getDepartment() {
       return department;
    }
 
-   String getNumber() {
+   public String getNumber() {
       return number;
    }
 
@@ -92,5 +92,10 @@ public class CourseSession {
          sessionLength * daysInWeek - daysFromFridayToMonday;
       calendar.add(Calendar.DAY_OF_YEAR, numberOfDays);
       return calendar.getTime();
+   }
+
+   @Override
+   public int compareTo(CourseSession o) {
+	   return (getDepartment()+getNumber()).compareTo(o.getDepartment()+o.getNumber());
    }
 }
