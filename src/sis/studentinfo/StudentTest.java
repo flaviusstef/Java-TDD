@@ -54,7 +54,7 @@ public class StudentTest extends TestCase {
 		assertGpa(student, 3.0);
 		student.addGrade(Student.Grade.D);
 		assertGpa(student, 2.5);
-		student.addGrade(Student.Grade.E);
+		student.addGrade(Student.Grade.F);
 		assertGpa(student, 2.0) ;
 
 	}
