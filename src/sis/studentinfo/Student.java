@@ -2,6 +2,7 @@ package sis.studentinfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class Student {
 	static final int CREDITS_REQUIRED_FOR_FULL_TIME = 12;
@@ -11,6 +12,10 @@ public class Student {
 	private String state = "";
 	private List<Grade> grades = new ArrayList<Grade>();
 	private GradingStrategy gradingStrategy = new BasicGradingStrategy();
+	private String lastName   = "";
+	private String firstName  = "";
+	private String middleName = "";
+
 	public enum Grade {
 		A(4), B(3), C(2), D(1), F(0);
 		private int points;
@@ -18,9 +23,21 @@ public class Student {
 		int getPoints() { return points; }
 	};
 
-	public Student(String name) {
-		this.name = name;
+	public Student(String fullName) {
 		credits = 0;
+		this.name = fullName;
+		StringTokenizer st = new StringTokenizer(fullName, " ");
+		switch (st.countTokens()) {
+			case 1: this.lastName = st.nextToken();
+ 			        break;
+			case 2: this.firstName = st.nextToken();
+			        this.lastName = st.nextToken();
+			        break;
+			case 3: this.firstName = st.nextToken();
+			        this.middleName = st.nextToken();
+			        this.lastName = st.nextToken();
+			        break;
+		}
 	}
 
 	public String getName() {
@@ -60,8 +77,20 @@ public class Student {
 	void addGrade(Grade grade) {
 		grades.add(grade);
 	}
-	
+
 	public void setGradingStrategy(GradingStrategy strategy) {
 		this.gradingStrategy  = strategy;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
 	}
 }
