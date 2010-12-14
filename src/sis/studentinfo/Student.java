@@ -3,10 +3,12 @@ package sis.studentinfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 public class Student {
 	static final int CREDITS_REQUIRED_FOR_FULL_TIME = 12;
 	static final String IN_STATE = "CO";
+	public static Logger logger = Logger.getLogger(Student.class.getName());
 	private String name;
 	private int credits;
 	private String state = "";
@@ -15,6 +17,8 @@ public class Student {
 	private String lastName   = "";
 	private String firstName  = "";
 	private String middleName = "";
+	private List<Integer> charges = new ArrayList<Integer>();
+	public static final String TOO_MANY_NAME_PARTS = "Student '%s' has a name with more than 3 parts";
 
 	public enum Grade {
 		A(4), B(3), C(2), D(1), F(0);
@@ -28,15 +32,18 @@ public class Student {
 		this.name = fullName;
 		StringTokenizer st = new StringTokenizer(fullName, " ");
 		switch (st.countTokens()) {
-			case 1: this.lastName = st.nextToken();
- 			        break;
-			case 2: this.firstName = st.nextToken();
-			        this.lastName = st.nextToken();
-			        break;
-			case 3: this.firstName = st.nextToken();
-			        this.middleName = st.nextToken();
-			        this.lastName = st.nextToken();
-			        break;
+			case 1:  this.lastName = st.nextToken();
+ 			         break;
+			case 2:  this.firstName = st.nextToken();
+			         this.lastName = st.nextToken();
+			         break;
+			case 3:  this.firstName = st.nextToken();
+			         this.middleName = st.nextToken();
+			         this.lastName = st.nextToken();
+			         break;
+			default: String message = String.format(Student.TOO_MANY_NAME_PARTS, fullName);
+					 Student.logger.info(message);
+				     throw new StudentNameFormatException(fullName);
 		}
 	}
 
@@ -92,5 +99,17 @@ public class Student {
 
 	public String getMiddleName() {
 		return middleName;
+	}
+
+	public void addCharge(int charge) {
+		charges.add(charge);
+	}
+
+	public int totalCharges() {
+		int result = 0;
+		for (int charge: charges) {
+			result += charge;
+		}
+		return result;
 	}
 }

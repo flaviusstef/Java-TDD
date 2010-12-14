@@ -3,7 +3,10 @@ package sis.studentinfo;
 import static org.junit.Assert.*;
 import static sis.studentinfo.DateUtil.createDate;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.*;
 
@@ -41,6 +44,39 @@ public abstract class SessionTest {
 		assertEquals(2, session.getNumberOfStudents());
 		assertEquals(student1, session.get(0));
 		assertEquals(student2, session.get(1));
+	}
+
+	@Test
+	public void canIterateThroughStudents() {
+		session.enroll(new Student("a"));
+		session.enroll(new Student("b"));
+		session.enroll(new Student("c"));
+
+		List<Student> expected = session.getAllStudents();
+		List<Student> actual = new ArrayList<Student>();
+		for (Student s: session) {
+			actual.add(s);
+		}
+		assertEquals("Iterate through students", expected, actual);
+	}
+
+	@Test
+	public void validSessionUrl() throws SessionException {
+		final String url = "http://course.langrsoft.com/cmsc300";
+		session.setUrl(url);
+		assertEquals(url, session.getUrl().toString());
+	}
+
+	public void invalidSessionUrl() {
+		final String url = "httsp://course.langrsoft.com/cmsc300";
+		try {
+			session.setUrl(url);
+			fail("expected exception due to invalid protocol in URL");
+		}
+		catch (SessionException success) {
+			Throwable cause = success.getCause();
+			assertEquals(MalformedURLException.class, cause.getClass());
+		}
 	}
 
 	abstract protected Session createSession(String department, String number, Date startDate);

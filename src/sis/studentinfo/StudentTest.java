@@ -1,10 +1,16 @@
 package sis.studentinfo;
 
-import junit.framework.*;
+import static org.junit.Assert.*;
 
-public class StudentTest extends TestCase {
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+
+import org.junit.Test;
+
+public class StudentTest {
 	private static final double GRADE_TOLERANCE = 0.05;
 
+	@Test
 	public void testCreate() {
 		final String firstStudentName = "Jane Doe";
 		Student firstStudent = new Student(firstStudentName);
@@ -27,6 +33,23 @@ public class StudentTest extends TestCase {
 		assertEquals("Douglas", thirdStudent.getMiddleName());
 	}
 
+	@Test
+	public void testBadlyFormattedName() {
+		Handler handler = new TestHandler();
+		Student.logger.addHandler(handler);
+		String studentName = "a b c d"; 
+		try {
+			new Student(studentName);
+			fail("expected exception from 4-part name");
+		}
+		catch (StudentNameFormatException expectedException) {
+			String message = String.format(Student.TOO_MANY_NAME_PARTS, studentName);
+			assertEquals(message, expectedException.getMessage());
+			assertEquals(message, ((TestHandler)handler).getMessage());
+		}
+	}
+	
+	@Test
 	public void testStudentStatus() {
 		Student student = new Student("a");
 		assertEquals(0, student.getCredits());
@@ -46,6 +69,7 @@ public class StudentTest extends TestCase {
 		assertTrue(student.isFullTime());
 	}
 
+	@Test
 	public void testInState() {
 		Student student = new Student("a");
 		assertFalse(student.isInState());
@@ -55,6 +79,7 @@ public class StudentTest extends TestCase {
 		assertFalse(student.isInState());
 	}
 
+	@Test
 	public void testGrading() {
 		Student student = new Student("a");
 		assertGpa(student, 0.0);
@@ -71,10 +96,7 @@ public class StudentTest extends TestCase {
 
 	}
 
-	private void assertGpa(Student s, Double gpa) {
-		assertEquals(gpa, s.getGpa(), GRADE_TOLERANCE);
-	}
-
+	@Test
 	public void testCalculateHonorsStudentGpa() {
 		assertGpa(createHonorsStudent(), 0.0);
 		assertGpa(createHonorsStudent(Student.Grade.A), 5.0);
@@ -82,6 +104,18 @@ public class StudentTest extends TestCase {
 		assertGpa(createHonorsStudent(Student.Grade.C), 3.0);
 		assertGpa(createHonorsStudent(Student.Grade.D), 2.0);
 		assertGpa(createHonorsStudent(Student.Grade.F), 0.0);
+	}
+
+	@Test
+	public void itCanBeCharged() {
+		Student s = new Student("Flavius");
+		s.addCharge(100);
+		s.addCharge(150);
+		assertEquals(250, s.totalCharges());
+	}
+
+	private void assertGpa(Student s, Double gpa) {
+		assertEquals(gpa, s.getGpa(), GRADE_TOLERANCE);
 	}
 
 	private Student createHonorsStudent(Student.Grade grade) {
